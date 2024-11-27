@@ -55,5 +55,6 @@ jobs:
     steps:
       - name: Test environment name from previous step🧪
         run: echo "Environment is set to ${{ needs.setup-environment-name.outputs.github_environment }}"
+
       - name: Test environment vars 🧪
         run: echo "Environment is set to ${{ vars.ENVIRONMENT }}"

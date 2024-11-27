@@ -69,4 +69,16 @@ jobs:
       - name: Test environment name test 🧪
         run: echo "Environment is set to ${{ env.ENVIRONMENT_NAME }}"
 
-  
+      - name: Repository 🗃️
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Test github.ref_name
+        run: echo "github.ref_name is set to ${{ github.ref_name }}"
+      
+      - name: Checks
+        run: |
+          git status;
+          ls -al;
+          git log;
