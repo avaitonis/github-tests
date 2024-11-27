@@ -1,0 +1,59 @@
+name: Infrastructure
+
+on:
+  push:
+    branches:
+      - dev
+      - staging
+      - production
+    paths:
+      - '.github/workflows/infrastructure.yml'
+      - 'infrastructure/**'
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target deployment environment'
+        type: environment
+        required: true
+
+env:
+  PRODUCT: test_product
+
+jobs:
+  # 1. Set environment name
+  setup-environment-name:
+    name: Set environment name 🔧
+    runs-on: ubuntu-latest
+    env:
+      INPUT_ENVIRONMENT: ${{ inputs.environment }}
+    outputs:
+      github_environment: ${{ env.ENVIRONMENT_NAME }}
+    steps:
+      - name: Set environment name 💾
+        id: setup-environment-name
+        run: |
+          if [[ $INPUT_ENVIRONMENT != "" ]]; then
+            echo ENVIRONMENT_NAME=$INPUT_ENVIRONMENT >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo ENVIRONMENT_NAME=dev >> $GITHUB_ENV
+          else
+            echo ENVIRONMENT_NAME=${{ github.ref_name }} >> $GITHUB_ENV
+          fi
+
+      - name: Test environment name 🧪
+        run: echo "Environment is set to ${{ env.ENVIRONMENT_NAME }}"
+
+  # 2. Setup workflow after accessing GitHub variables
+  setup:
+    name: Setup 🔧
+    needs: setup-environment-name
+    runs-on: ubuntu-latest
+    environment: ${{ needs.setup-environment-name.outputs.github_environment }}
+    outputs:
+      product: ${{ env.PRODUCT }}
+    steps:
+      - name: Test environment name from previous step🧪
+        run: echo "Environment is set to ${{ needs.setup-environment-name.outputs.github_environment }}"
+      - name: Test environment vars 🧪
+        run: echo "Environment is set to ${{ vars.ENVIRONMENT }}"

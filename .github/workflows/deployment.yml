@@ -1,0 +1,72 @@
+name: Deployment🚀
+run-name: Deployment for ${{ github.repository }}
+
+on:
+  workflow_run:
+    workflows: ['Infrastructure']
+    types:
+      - completed
+
+  push:
+    branches:
+      - main
+      - dev
+      - staging
+      - production
+    paths:
+      - ".github/workflows/deployment.yml"
+
+env:
+  PRODUCT: test_product
+  timezone: ${{ vars.TIMEZONE }}
+
+jobs:
+  # 1. Check status
+  check-status:
+    name: Check if started by Infrastructure workflow 🔧
+    runs-on: ubuntu-latest
+    env:
+      PREVIOUS_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+    steps:
+      - name: Stop - if started by another workflow and that workflow failed ⚠️
+        run: |
+          if [ $PREVIOUS_CONCLUSION != "" -a $PREVIOUS_CONCLUSION != "success" ]; then
+            printf '%s\n' "Parent workflow status is not successful, stop execution " >&2
+            exit 1
+          fi
+
+
+  # 2. Set environment name
+  setup-environment-name:
+    name: Set environment name 🔧
+    needs: check-status
+    runs-on: ubuntu-latest
+    env:
+      PREVIOUS_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+      PREVIOUS_BRANCH: ${{ github.event.workflow_run.head_branch }}
+    outputs:
+      github_environment: ${{ env.ENVIRONMENT_NAME }}
+    steps:
+      - name: Set environment name 💾
+        id: set-environment
+        run: |
+          echo "START ==================="
+          echo "Environment is set to ${{ env.ENVIRONMENT_NAME }}"
+          echo "PREVIOUS_CONCLUSION = $PREVIOUS_CONCLUSION"
+          echo $PREVIOUS_CONCLUSION
+          echo "PREVIOUS_BRANCH = $PREVIOUS_BRANCH"
+          echo $PREVIOUS_BRANCH
+          echo "github.ref_name = ${{ github.ref_name }}"
+          echo "END ==================="
+          if [ $PREVIOUS_CONCLUSION != "" ]; then
+            echo ENVIRONMENT_NAME=$PREVIOUS_BRANCH >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo ENVIRONMENT_NAME=dev >> $GITHUB_ENV
+          else
+            echo ENVIRONMENT_NAME=${{ github.ref_name }} >> $GITHUB_ENV
+          fi
+
+      - name: Test environment name test 🧪
+        run: echo "Environment is set to ${{ env.ENVIRONMENT_NAME }}"
+
+  
