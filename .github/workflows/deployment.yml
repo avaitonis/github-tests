@@ -6,6 +6,7 @@ on:
     workflows: ['Infrastructure']
     types:
       - completed
+      # default branch will be "main", not same as for Infrastructure workflow run
 
   push:
     branches:
@@ -57,6 +58,10 @@ jobs:
           echo "PREVIOUS_BRANCH = $PREVIOUS_BRANCH"
           echo $PREVIOUS_BRANCH
           echo "github.ref_name = ${{ github.ref_name }}"
+          echo "==================="
+          echo "git status"
+          git status
+          echo "==================="
           echo "END ==================="
           if [ $PREVIOUS_CONCLUSION != "" ]; then
             echo ENVIRONMENT_NAME=$PREVIOUS_BRANCH >> $GITHUB_ENV
