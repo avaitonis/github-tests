@@ -17,6 +17,10 @@ on:
         type: environment
         required: true
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true # Cancel deployment.yml if it is running
+
 env:
   PRODUCT: test_product
 
