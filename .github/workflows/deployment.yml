@@ -17,6 +17,8 @@ on:
     paths:
       - ".github/workflows/deployment.yml"
 
+  workflow_dispatch:
+
 env:
   PRODUCT: test_product
   timezone: ${{ vars.TIMEZONE }}
