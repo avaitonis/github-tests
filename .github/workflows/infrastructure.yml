@@ -20,7 +20,7 @@ on:
         required: true
 
 concurrency:
-  group: deploy-${{ github.ref_name }}
+  group: all-deployments
   cancel-in-progress: true # Cancel deployment.yml and infrastructure.yml if they are running
 
 env:
