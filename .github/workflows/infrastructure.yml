@@ -3,6 +3,7 @@ name: Infrastructure
 on:
   push:
     branches:
+      - main
       - dev
       - staging
       - production
@@ -58,6 +59,11 @@ jobs:
     outputs:
       product: ${{ env.PRODUCT }}
     steps:
+      - name: Repository 🗃️
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.setup.outputs.github_ref }}
+
       - name: Test environment name from previous step🧪
         run: echo "Environment is set to ${{ needs.setup-environment-name.outputs.github_environment }}"
 

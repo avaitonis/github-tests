@@ -55,6 +55,11 @@ jobs:
     outputs:
       github_environment: ${{ env.ENVIRONMENT_NAME }}
     steps:
+      - name: Repository 🗃️
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.setup.outputs.github_ref }}
+
       - name: Set environment name 💾
         id: set-environment
         run: |
@@ -66,8 +71,8 @@ jobs:
           echo $PREVIOUS_BRANCH
           echo "github.ref_name = ${{ github.ref_name }}"
           echo "==================="
-          echo "git status"
-          git status
+          #echo "git status"
+          #git status
           echo "==================="
           echo "END ==================="
           if [ $PREVIOUS_CONCLUSION != "" ]; then
