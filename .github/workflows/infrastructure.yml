@@ -21,7 +21,8 @@ on:
 
 concurrency:
   group: deploy-${{ github.ref_name }}
-  cancel-in-progress: true # Cancel deployment.yml and infrastructure.yml if it is running
+  # cancel-in-progress: true # Cancel deployment.yml and infrastructure.yml if it is running
+  cancel-in-progress: false # Do not cancel infrastructure.yml if it is running, queue deployment.yml runs.
 
 env:
   PRODUCT: test_product
