@@ -107,7 +107,7 @@ jobs:
         run: |
           echo "Starting long running task..."
           echo "time `date`"
-          sleep 300
+          sleep 60
           echo "Long running task completed."
           echo "time `date`"
 
