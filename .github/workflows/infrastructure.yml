@@ -7,8 +7,9 @@ on:
       - staging
       - production
     paths:
-      - '.github/workflows/infrastructure.yml'
-      - 'infrastructure/**'
+      - ".github/workflows/infrastructure.yml"
+      - "infrastructure/**"
+      - "src/**"
 
   workflow_dispatch:
     inputs:
@@ -17,9 +18,9 @@ on:
         type: environment
         required: true
 
-concurrency:
-  group: deploy-${{ github.ref_name }}
-  cancel-in-progress: true # Cancel deployment.yml if it is running
+# concurrency:
+#   group: deploy-${{ github.ref_name }}
+#   cancel-in-progress: true # Cancel deployment.yml if it is running
 
 env:
   PRODUCT: test_product
@@ -62,3 +63,28 @@ jobs:
 
       - name: Test environment vars 🧪
         run: echo "Environment is set to ${{ vars.ENVIRONMENT }}"
+
+      - name: Test github.refs
+        run: |
+          echo "github.ref_name is set to ${{ github.ref_name }}"
+          echo "github.ref is set to ${{ github.ref }}"
+      
+      - name: Checks
+        run: |
+          git status;
+          ls -al;
+          git log;
+
+      - name: Long running task
+        id: long-running-task
+        run: |
+          echo "Starting long running task..."
+          echo "time `date`"
+          sleep 300
+          echo "Long running task completed."
+          echo "time `date`"
+
+      - name: End
+        id: end
+        run: |
+          echo "End"
